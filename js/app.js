@@ -61,7 +61,7 @@ function handleClick(evt) {
   switchPlayerTurn();
   render();
   if (!againstPlayer) {
-    const compIdx = calcCompIdx(+sqrIdx);
+    const compIdx = calcCompIdx(sqrIdx);
     if (board[compIdx]) return;
     if (winner) return;
     placePiece(compIdx);
@@ -89,6 +89,27 @@ function switchPlayerTurn() {
   if (winner === false) turn *= -1;
 };
 
+function calcCompIdx(idx) {
+  const playerMove = idx;
+  if (checkForCheckmate()) return checkmate();
+  if (checkForCheck()) return cancelCheck();
+  if (moveCombos[1].some(move => move === playerMove)) {
+    if (!board[4]) {
+      return grabRandomNum(moveCombos[0]);
+    } else {
+      return grabRandomNum(moveCombos[2]);
+    };
+  };
+  if (moveCombos[2].some(move => move === playerMove)) {
+    if (!board[4]) {
+      return grabRandomNum(moveCombos[0]);
+    } else {
+      return grabRandomNum(moveCombos[1]);
+    };
+  };
+  if (moveCombos[0].some(move => move === playerMove)) return grabRandomNum(moveCombos[1]);
+};
+
 function checkForCheck() {
   return winningCombos.find((combo) => combo.reduce((sqrsInARow, sqrId) => sqrsInARow + board[sqrId], 0) === 2 ? checkCombo = combo : null);
 };
@@ -112,29 +133,6 @@ function checkmate() {
 function grabRandomNum(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 };
-  
-function calcCompIdx(idx) {
-  const playerMove = idx;
-  if (checkForCheckmate()) return checkmate();
-  if (checkForCheck()) return cancelCheck();
-  if (moveCombos[1].some(move => move === playerMove)) {
-    if (!board[4]) {
-      return grabRandomNum(moveCombos[0]);
-    } else {
-      return grabRandomNum(moveCombos[2]);
-    };
-  };
-  if (moveCombos[2].some(move => move === playerMove)) {
-    if (!board[4]) {
-      return grabRandomNum(moveCombos[0]);
-    } else {
-      return grabRandomNum(moveCombos[1]);
-    };
-  };
-  if (moveCombos[0].some(move => move === playerMove)) return grabRandomNum(moveCombos[1]);
-};
 
 initMenu();
-
-
 
