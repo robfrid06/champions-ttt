@@ -15,6 +15,10 @@ body {
   border: none;
 }
 
+.game-container > * {
+  flex: 1;
+}
+
 .board {
   display: grid;
   grid-template-rows: repeat(3, 10vmin);

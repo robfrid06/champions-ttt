@@ -108,6 +108,8 @@ function calcCompIdx(idx) {
   if (moveCombos[1].some(move => move === playerMove)) {
     if (!board[4]) {
       return pickEmptyIdx(moveCombos[0]);
+    } else if (checkCorners()) {
+      return pickEmptyIdx(moveCombos[1]);
     } else {
       return pickEmptyIdx(moveCombos[2]);
     };
@@ -118,8 +120,8 @@ function calcCompIdx(idx) {
     } else if (moveCombos[1].some(move => !board[move])){
       return pickEmptyIdx(moveCombos[1]);
     } else {
-      return pickEmptyIdx(moveCombos[3])
-    }
+      return pickEmptyIdx(moveCombos[3]);
+    };
   };
   if (moveCombos[0].some(move => move === playerMove)) return pickEmptyIdx(moveCombos[1]);
 };
@@ -142,6 +144,14 @@ function checkmate() {
   return checkmateCombo.find(sqrId => {
     return !board[sqrId];
   });
+};
+
+function checkCorners() {
+  if (moveCombos[1].reduce((cornersOcc, cornerId) => board[cornerId] === -1 ? ++cornersOcc : cornersOcc,0) === 1) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 function pickEmptyIdx(arr) {
