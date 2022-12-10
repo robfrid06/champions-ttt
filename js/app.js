@@ -1,6 +1,6 @@
 /*-------------------------------- Constants --------------------------------*/
 const winningCombos = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-const moveCombos = [[4], [0, 2, 6, 8], [1, 3, 5, 7]];
+const moveCombos = [[4], [0, 2, 6, 8], [1, 3, 5, 7], [0, 1, 2, 3, 4, 5, 6, 7, 8]];
 
 /*---------------------------- Variables (state) ----------------------------*/
 let board, turn, winner, tie, againstPlayer, checkCombo, checkmateCombo;
@@ -23,12 +23,17 @@ function initMenu() {
 function init(evt) {
   gameBoard.style.visibility = `visible`;
   board = [null, null, null, null, null, null, null, null, null];
-  turn = 1;
   winner = false;
   tie = false;
-  againstPlayer = evt.target.id === `against-player` ? true : false;
   checkCombo = null;
   checkmateCombo = null;
+  if (evt.target.id === `against-player`) {
+    againstPlayer = true;
+    turn = {id: 1, name: `One`};
+  } else {
+    againstPlayer = false;
+    turn = {id: 1, name: `Human`};
+  };
   render();
 };
 
@@ -46,9 +51,9 @@ function updateBoard() {
 };
 
 function updateMessage() {
-  winner === false && tie === false ? messageEl.innerHTML = `It is Player ${turn}'s turn.` : 
+  winner === false && tie === false ? messageEl.innerHTML = `It is Player ${turn.name}'s turn.` : 
   winner === false && tie === true ? messageEl.innerHTML = `It is a tie!` :
-  messageEl.innerHTML = `Player ${turn} wins!`;
+  messageEl.innerHTML = `Player ${turn.name} wins!`;
 };
 
 function handleClick(evt) {
@@ -73,7 +78,7 @@ function handleClick(evt) {
 };
 
 function placePiece(idx) {
-    board[idx] = turn;
+    board[idx] = turn.id;
 };
 
 function checkForTie() {
@@ -86,35 +91,44 @@ function checkForWinner() {
 
 function switchPlayerTurn() {
   if (winner === true) return;
-  if (winner === false) turn *= -1;
+  if (winner === false) {
+    turn.id *= -1;
+    if (againstPlayer) {
+      turn.name === `One` ? turn.name = `Two` : turn.name = `One`;  
+    } else {
+      turn.name === `Human` ? turn.name = `Computer` : turn.name = `Human`;  
+    }
+  };
 };
 
 function calcCompIdx(idx) {
   const playerMove = idx;
   if (checkForCheckmate()) return checkmate();
-  if (checkForCheck()) return cancelCheck();
+  if (checkForCheck()) return cancelCheckmate();
   if (moveCombos[1].some(move => move === playerMove)) {
     if (!board[4]) {
-      return grabRandomNum(moveCombos[0]);
+      return pickEmptyIdx(moveCombos[0]);
     } else {
-      return grabRandomNum(moveCombos[2]);
+      return pickEmptyIdx(moveCombos[2]);
     };
   };
   if (moveCombos[2].some(move => move === playerMove)) {
     if (!board[4]) {
-      return grabRandomNum(moveCombos[0]);
+      return pickEmptyIdx(moveCombos[0]);
+    } else if (moveCombos[1].some(move => !board[move])){
+      return pickEmptyIdx(moveCombos[1]);
     } else {
-      return grabRandomNum(moveCombos[1]);
-    };
+      return pickEmptyIdx(moveCombos[3])
+    }
   };
-  if (moveCombos[0].some(move => move === playerMove)) return grabRandomNum(moveCombos[1]);
+  if (moveCombos[0].some(move => move === playerMove)) return pickEmptyIdx(moveCombos[1]);
 };
 
 function checkForCheck() {
   return winningCombos.find((combo) => combo.reduce((sqrsInARow, sqrId) => sqrsInARow + board[sqrId], 0) === 2 ? checkCombo = combo : null);
 };
 
-function cancelCheck() {
+function cancelCheckmate() {
   return checkCombo.find(sqrId => {
     return !board[sqrId];
   });
@@ -130,9 +144,9 @@ function checkmate() {
   });
 };
 
-function grabRandomNum(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+function pickEmptyIdx(arr) {
+  let newArr = arr.filter(sqrId => !board[sqrId]);
+  return newArr[Math.floor(Math.random() * newArr.length)];
 };
 
 initMenu();
-
