@@ -1,6 +1,7 @@
 /*-------------------------------- Constants --------------------------------*/
 const winningCombos = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 const moveCombos = [[4], [0, 2, 6, 8], [1, 3, 5, 7], [0, 1, 2, 3, 4, 5, 6, 7, 8]];
+const winSums = [null, null, null, null, null, null, null, null];
 
 /*---------------------------- Variables (state) ----------------------------*/
 let board, turn, winner, tie, againstPlayer, checkCombo, checkmateCombo;
@@ -97,33 +98,20 @@ function switchPlayerTurn() {
       turn.name === `One` ? turn.name = `Two` : turn.name = `One`;  
     } else {
       turn.name === `Human` ? turn.name = `Computer` : turn.name = `Human`;  
-    }
+    };
   };
 };
 
-function calcCompIdx(idx) {
-  const playerMove = idx;
-  if (checkForCheckmate()) return checkmate();
-  if (checkForCheck()) return cancelCheckmate();
-  if (moveCombos[1].some(move => move === playerMove)) {
-    if (!board[4]) {
-      return pickEmptyIdx(moveCombos[0]);
-    } else if (checkCorners()) {
-      return pickEmptyIdx(moveCombos[1]);
-    } else {
-      return pickEmptyIdx(moveCombos[2]);
-    };
+/*---------------------------- Algorithm Functions ----------------------------*/
+
+function calcCompIdx() {
+  if (checkForCheckmate()) {
+    return checkmate();
+  } else if (checkForCheck()) {
+    return cancelCheckmate();
+  } else {
+    return findOptimalMove();
   };
-  if (moveCombos[2].some(move => move === playerMove)) {
-    if (!board[4]) {
-      return pickEmptyIdx(moveCombos[0]);
-    } else if (moveCombos[1].some(move => !board[move])){
-      return pickEmptyIdx(moveCombos[1]);
-    } else {
-      return pickEmptyIdx(moveCombos[3]);
-    };
-  };
-  if (moveCombos[0].some(move => move === playerMove)) return pickEmptyIdx(moveCombos[1]);
 };
 
 function checkForCheck() {
@@ -154,9 +142,68 @@ function checkCorners() {
   }
 };
 
-function pickEmptyIdx(arr) {
-  let newArr = arr.filter(sqrId => !board[sqrId]);
-  return newArr[Math.floor(Math.random() * newArr.length)];
+function findOptimalMove() {
+  let availableMoves = moveCombos[3].filter(move => !board[move]);
+  let optimalMoves = [];
+  availableMoves.forEach(move => {
+    if (optimalMoves.length === 0) {
+      optimalMoves.push(move);
+      return;
+    };
+    if (runSimulation(move, 1) === runSimulation(optimalMoves[0], 1)) {
+      optimalMoves.push(move);
+      return;
+    } else if (runSimulation(move, 1) > runSimulation(optimalMoves[0], 1)){
+      optimalMoves = [];
+      optimalMoves.push(move);
+    };
+  });
+  let filteredOptimalMoves = filterByMoveHierarchy(optimalMoves);
+  return filteredOptimalMoves[Math.floor(Math.random() * filteredOptimalMoves.length)];
+};
+
+function runSimulation(move, turnValue) {
+  let simulationBoard = Object.values(board);
+  let simulationWinSums = Object.values(winSums);
+  simulationBoard[move] = turnValue;
+  updateWinSums(simulationBoard, simulationWinSums);
+  return countWinSumsAtTwo(simulationWinSums);
+};
+
+function updateWinSums(boardName, sumList) {
+  sumList.forEach(() => winningCombos.forEach((winningCombo, idx) => sumList[idx] = winningCombo.reduce((sqrsInARow, sqrId) => sqrsInARow + boardName[sqrId], 0)));
+};
+
+function countWinSumsAtTwo(sumList) {
+  return sumList.reduce((totalWinSumsAtTwo, winSum) => {
+    if (winSum === 2) {
+      return totalWinSumsAtTwo + 1;
+    } else {
+      return totalWinSumsAtTwo;
+    };
+  }, 0);
+};
+
+function filterByMoveHierarchy(moves) {
+  if (moves.includes(4)) {
+    return [4];
+  } else if (!moves.includes(4) && checkForIncludes(moves, 1)) {
+    return moves.filter(move => {
+      if (moveCombos[1].includes(move)) {
+        return ++move;
+      };
+    });
+  } else {
+    return moves;
+  };
+};
+
+function checkForIncludes(arr, comboId) {
+  return arr.some(move => {
+    if (moveCombos[comboId].includes(move)) {
+      return true;
+    };
+  });
 };
 
 initMenu();
