@@ -26,11 +26,11 @@ function initMenu() {
 };
 
 function init(evt) {
+  resetAllAnimations();
   runAnimation(paperEl, `1s moveOut`);
   setTimeout(() => {
     gameBoard.style.visibility = `visible`;
-    rotateEveryElement();
-    runAnimation(paperEl, `1s moveIn`);
+    messageEl.innerHTML = ``;
     board = [null, null, null, null, null, null, null, null, null];
     winner = false;
     tie = false;
@@ -44,6 +44,8 @@ function init(evt) {
       turn = {id: 1, name: `Loser`};
     };
     render();
+    rotateEveryElement();
+    runAnimation(paperEl, `1s moveIn`);
   }, 1000);
 };
 
@@ -55,30 +57,61 @@ function render() {
 function updateBoard() {
   if (againstPlayer === true) {
     board.forEach((square, i) => {
-      square === 1 ? squareEls[i].innerHTML = `X` : 
-      square === -1 ? squareEls[i].innerHTML = `O` : 
-      squareEls[i].innerHTML = ``;
-      });
+      if (square === 1) {
+        runAnimation(squareEls[i], `.25s textFadeIn`);
+        squareEls[i].innerHTML = `X`;
+      } else if (square === -1) {
+        runAnimation(squareEls[i], `.25s textFadeIn`);
+        squareEls[i].innerHTML = `O`; 
+      } else {
+        squareEls[i].innerHTML = ``;
+      };
+    });
   } else {
     board.forEach((square, i) => {
-      square === 1 ? squareEls[i].innerHTML = `<span id="special-X">X<span>` : 
-      square === -1 ? squareEls[i].innerHTML = `<span id="special-O">O<span>` : 
-      squareEls[i].innerHTML = ``;
+      if (square === 1) {
+        runAnimation(squareEls[i], `.25s textFadeIn`);
+        squareEls[i].innerHTML = `<span id="special-X">X<span>`;
+      } else if (square === -1) {
+        runAnimation(squareEls[i], `.25s textFadeIn`);
+        squareEls[i].innerHTML = `<span id="special-O">O<span>`; 
+      } else {
+        squareEls[i].innerHTML = ``;
+      };
     });
   };
 };
 
 function updateMessage() {
-  if (againstPlayer === true) {
-    winner === false && tie === false ? messageEl.innerHTML = `Hurry up, ${turn.name}!` : 
-    winner === false && tie === true ? messageEl.innerHTML = `You tied!` :
-    messageEl.innerHTML = `${turn.name} wins!`;
-  } else {
-    winner === false && tie === false && turn.id === 1? messageEl.innerHTML = `Good luck, ${turn.name}!` : 
-    winner === false && tie === false && turn.id === -1? messageEl.innerHTML = `${turn.name} is deciding...` : 
-    winner === false && tie === true ? messageEl.innerHTML = `You'll never beat me, ${turn.name}!` :
-    messageEl.innerHTML = `${turn.name} wins again!`;
-  };
+  runAnimation(messageEl, `.5s textFadeOut`);
+  setTimeout(() => {
+    if (againstPlayer === true) {
+      if (winner === false && tie === false) {
+        runAnimation(messageEl, `.5s textFadeIn`);
+        messageEl.innerHTML = `Hurry up, ${turn.name}!`;
+      } else if (winner === false && tie === true) {
+        runAnimation(messageEl, `.5s textFadeIn`);
+        messageEl.innerHTML = `You both lose!`;
+      } else {
+        runAnimation(messageEl, `.5s textFadeIn`);
+        messageEl.innerHTML = `${turn.name} wins!`
+      };
+    } else {
+      if (winner === false && tie === false && turn.id === 1) {
+        runAnimation(messageEl, `.5s textFadeIn`);
+        messageEl.innerHTML = `Good luck, ${turn.name}!`; 
+      } else if (winner === false && tie === false && turn.id === -1) {
+        runAnimation(messageEl, `.5s textFadeIn`);
+        messageEl.innerHTML = `${turn.name} is deciding...`;
+      } else if (winner === false && tie === true) {
+        runAnimation(messageEl, `.5s textFadeIn`);
+        messageEl.innerHTML = `You'll never beat<br><span class="champion">"The Champion"</span>!`;
+      } else {
+        runAnimation(messageEl, `.5s textFadeIn`);
+        messageEl.innerHTML = `${turn.name} wins again!`;
+      };
+    };
+  }, 500);
 };
 
 function handleClick(evt) {
@@ -95,14 +128,14 @@ function handleClick(evt) {
     setTimeout(() => {
       const compIdx = calcCompIdx(sqrIdx);
       if (board[compIdx]) return;
-      if (winner) return;
+      if (winner || tie) return;
       placePiece(compIdx);
       checkForTie();
       checkForWinner();
       switchPlayerTurn();
       render();
       squareEls.forEach(squareEl => squareEl.addEventListener(`click`, handleClick));
-    }, 1500);
+    }, 2000);
   };
 };
 
@@ -249,6 +282,15 @@ function pickRandomNumber(min, max) {
 function runAnimation(elementRef, animationName) {
   elementRef.style.animation = animationName;
 }
+
+function resetAllAnimations() {
+    squareEls.forEach(squareEls => {
+      squareEls.style.animation = ``;
+    });
+    everyDiv.forEach(eachDiv => {
+      eachDiv.style.animation = ``;
+    });
+};
 
 /*---------------------------- Start Function ----------------------------*/
 

@@ -22,6 +22,40 @@
   }
 }
 
+@keyframes textFadeIn {
+  0% {
+    border: none;
+    opacity: 0;
+    scale: .5;
+  }
+  50% {
+    border: none;
+    scale: 1.5;
+  }
+  100% {
+    border: none;
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes textFadeOut {
+  0% {
+    border: none;
+    opacity: 1;
+    scale: 1;
+  }
+  50% {
+    border: none;
+    scale: 1.5;
+  }
+  100% {
+    border: none;
+    opacity: 0;
+    scale: 0;
+  }
+}
+
 body {
   font-family: 'Schoolbell', cursive;
 	margin: 0;
@@ -61,11 +95,7 @@ div {
   height: 100%;
   top: 10%;
   filter: blur(.2px);
-  /* animation: 1s moveIn; */
-  /* animation: 1s moveOut; */
-
 }
-
 
 .game-container{
   width: 100%;
@@ -75,7 +105,7 @@ div {
   grid-template-columns: 14.5% 71% 14.5%;
   grid-template-rows: 17% 16.5% 50% 16.5%;
   grid-template-areas: 
-    "leftMarg header rightMarg"
+    "leftMarg header doodle"
     "leftMarg message rightMarg"
     "leftMarg board rightMarg"
     "leftMarg options rightMarg";
@@ -97,6 +127,25 @@ div {
   font-size: 4rem;
 }
 
+#header-writing:hover {
+  margin: 0;
+  text-align: center;
+  font-size: 4rem;
+}
+
+.doodle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: doodle;
+  width: 50%;
+  opacity: .8;
+}
+
+#doodle {
+  width: 100%;
+}
+
 .message {
   grid-area: message;
   height: 100%;
@@ -109,6 +158,10 @@ div {
   margin: 0;
   font-size: 2.8rem;
   margin-top: .5%;
+}
+
+#message-writing:hover {
+  cursor: default;
 }
 
 .board {
@@ -127,6 +180,10 @@ div {
   justify-content: center;
   align-items: center;
   font-size: 5rem;
+}
+
+.sqr:hover {
+  cursor: pointer;
 }
 
 #sq0 {
@@ -186,6 +243,35 @@ div {
   justify-content: space-between;
   align-items: flex-end;
   font-size: 2.1rem;
+}
+
+.option-button {
+  animation: .25s scaleDown;
+  scale: 1;
+}
+
+.option-button:hover {
+  cursor: pointer;
+  animation: .25s scaleUp;
+  scale: 1.5;
+}
+
+@keyframes scaleUp {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.5;
+  }
+}
+
+@keyframes scaleDown {
+  from {
+    scale: 1.5;
+  }
+  to {
+    scale: 1;
+  }
 }
 
 .champion {
