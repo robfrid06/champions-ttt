@@ -128,7 +128,10 @@ function handleClick(evt) {
     setTimeout(() => {
       const compIdx = calcCompIdx(sqrIdx);
       if (board[compIdx]) return;
-      if (winner || tie) return;
+      if (winner || tie) {
+        squareEls.forEach(squareEl => squareEl.addEventListener(`click`, handleClick));
+        return;
+      };
       placePiece(compIdx);
       checkForTie();
       checkForWinner();
