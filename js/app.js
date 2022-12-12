@@ -7,9 +7,11 @@ const winSums = [null, null, null, null, null, null, null, null];
 let board, turn, winner, tie, againstPlayer, checkCombo, checkmateCombo;
 
 /*------------------------ Cached Element References ------------------------*/
+const everyDiv = document.querySelectorAll(`.desktop :not(.sqr)`);
+const paperEl = document.querySelector(`.paper`);
 const gameBoard = document.querySelector(`.board`);
 const squareEls = document.querySelectorAll(`.sqr`);
-const messageEl = document.querySelector(`#message`);
+const messageEl = document.querySelector(`#message-writing`);
 const optionButtons = document.querySelectorAll(`.option-button`);
 
 /*----------------------------- Event Listeners -----------------------------*/
@@ -18,11 +20,18 @@ optionButtons.forEach(optionButton => optionButton.addEventListener(`click`, ini
 
 /*-------------------------------- Functions --------------------------------*/
 function initMenu() {
+  rotateEveryElement();
+  runAnimation(paperEl, `1s moveIn`);
   gameBoard.style.visibility = `hidden`;
 };
 
 function init(evt) {
-  gameBoard.style.visibility = `visible`;
+  runAnimation(paperEl, `1s moveOut`);
+  setTimeout(() => {
+    gameBoard.style.visibility = `visible`;
+    rotateEveryElement();
+    runAnimation(paperEl, `1s moveIn`);
+  }, 1000);
   board = [null, null, null, null, null, null, null, null, null];
   winner = false;
   tie = false;
@@ -30,10 +39,10 @@ function init(evt) {
   checkmateCombo = null;
   if (evt.target.id === `against-player`) {
     againstPlayer = true;
-    turn = {id: 1, name: `One`};
+    turn = {id: 1, name: `Student One`};
   } else {
     againstPlayer = false;
-    turn = {id: 1, name: `Human`};
+    turn = {id: 1, name: `Loser`};
   };
   render();
 };
@@ -44,17 +53,30 @@ function render() {
 };
 
 function updateBoard() {
-  board.forEach((square, i) => {
-    square === 1 ? squareEls[i].innerHTML = `X` : 
-    square === -1 ? squareEls[i].innerHTML = `O` : 
-    squareEls[i].innerHTML = ``;
-  });
+  if (againstPlayer === true) {
+    board.forEach((square, i) => {
+      square === 1 ? squareEls[i].innerHTML = `X` : 
+      square === -1 ? squareEls[i].innerHTML = `O` : 
+      squareEls[i].innerHTML = ``;
+      });
+  } else {
+    board.forEach((square, i) => {
+      square === 1 ? squareEls[i].innerHTML = `<span id="special-X">X<span>` : 
+      square === -1 ? squareEls[i].innerHTML = `<span id="special-O">O<span>` : 
+      squareEls[i].innerHTML = ``;
+    });
+  };
 };
-
 function updateMessage() {
-  winner === false && tie === false ? messageEl.innerHTML = `It is Player ${turn.name}'s turn.` : 
-  winner === false && tie === true ? messageEl.innerHTML = `It is a tie!` :
-  messageEl.innerHTML = `Player ${turn.name} wins!`;
+  if (againstPlayer === true) {
+    winner === false && tie === false ? messageEl.innerHTML = `Hurry up, ${turn.name}!` : 
+    winner === false && tie === true ? messageEl.innerHTML = `You tied!` :
+    messageEl.innerHTML = `${turn.name} wins!`;
+  } else {
+    winner === false && tie === false ? messageEl.innerHTML = `Good luck, ${turn.name}!` : 
+    winner === false && tie === true ? messageEl.innerHTML = `You'll never beat me, ${turn.name}!` :
+    messageEl.innerHTML = `${turn.name} wins again!`;
+  };
 };
 
 function handleClick(evt) {
@@ -95,9 +117,9 @@ function switchPlayerTurn() {
   if (winner === false) {
     turn.id *= -1;
     if (againstPlayer) {
-      turn.name === `One` ? turn.name = `Two` : turn.name = `One`;  
+      turn.name === `Student One` ? turn.name = `Student Two` : turn.name = `Student One`;  
     } else {
-      turn.name === `Human` ? turn.name = `Computer` : turn.name = `Human`;  
+      turn.name === `Loser` ? turn.name = `<span class="champion">"The Champion"</span>` : turn.name = `Loser`;  
     };
   };
 };
@@ -206,4 +228,25 @@ function checkForIncludes(arr, comboId) {
   });
 };
 
+/*---------------------------- CSS Functions ----------------------------*/
+
+function rotateEveryElement() {
+  everyDiv.forEach(eachDiv => {
+    eachDiv.style.transform = `rotate(${pickRandomNumber(-5, 5)}deg)`;
+  });
+};
+
+function pickRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+};
+
+function runAnimation(elementRef, animationName) {
+  elementRef.style.animation = animationName;
+}
+
+/*---------------------------- Start Function ----------------------------*/
+
 initMenu();
+
+
+

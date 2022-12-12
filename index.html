@@ -4,32 +4,42 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Schoolbell&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="./css/style.css">
 	<script defer src="./js/app.js"></script>
 	<title>Tic Tac Toe</title>
 </head>
 <body>
 	<div class="desktop">
-		<div class="game-container">
-			<h1>Tic-Tac-Toe</h1>
-			<h2 id="message">Message</h2>
-			
-			<section class="board">
-				<div class="sqr" id="sq0"></div>
-				<div class="sqr" id="sq1"></div>
-				<div class="sqr" id="sq2"></div>
-				<div class="sqr" id="sq3"></div>
-				<div class="sqr" id="sq4"></div>
-				<div class="sqr" id="sq5"></div>
-				<div class="sqr" id="sq6"></div>
-				<div class="sqr" id="sq7"></div>
-				<div class="sqr" id="sq8"></div>
-			</section>
-			<div class="options-container">
-				<div id="options-message">Choose your enemy:</div>
-				<div class="buttons-container">
-					<div class="option-button" id="against-player">Versus Player</div>   
-					<div class="option-button" id="against-computer">Versus Computer</div>
+		<div class="paper">
+			<div class="game-container">
+				<div class="header">
+					<div id="header-writing">Tic-Tac-Toe</div>
+				</div>
+				<div class="message">
+					<div id="message-writing">Choose your enemy!</div>
+				</div>
+				<div class="board">
+					<div class="sqr" id="sq0"></div>
+					<div class="sqr" id="sq1"></div>
+					<div class="sqr" id="sq2"></div>
+					<div class="sqr" id="sq3"></div>
+					<div class="sqr" id="sq4"></div>
+					<div class="sqr" id="sq5"></div>
+					<div class="sqr" id="sq6"></div>
+					<div class="sqr" id="sq7"></div>
+					<div class="sqr" id="sq8"></div>
+				</div>
+				<div class="options-container">
+					<div class="options-message-container">
+						<div id="options-message"></div>
+					</div>
+					<div class="buttons-container">
+						<div class="option-button" id="against-player">Versus<br>Another Student</div>   
+						<div class="option-button" id="against-computer">Versus<br><span class="champion">"The Champion"</span></div>
+					</div>
 				</div>
 			</div>
 		</div>
