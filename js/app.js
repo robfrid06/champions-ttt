@@ -31,20 +31,20 @@ function init(evt) {
     gameBoard.style.visibility = `visible`;
     rotateEveryElement();
     runAnimation(paperEl, `1s moveIn`);
+    board = [null, null, null, null, null, null, null, null, null];
+    winner = false;
+    tie = false;
+    checkCombo = null;
+    checkmateCombo = null;
+    if (evt.target.id === `against-player`) {
+      againstPlayer = true;
+      turn = {id: 1, name: `Student One`};
+    } else {
+      againstPlayer = false;
+      turn = {id: 1, name: `Loser`};
+    };
+    render();
   }, 1000);
-  board = [null, null, null, null, null, null, null, null, null];
-  winner = false;
-  tie = false;
-  checkCombo = null;
-  checkmateCombo = null;
-  if (evt.target.id === `against-player`) {
-    againstPlayer = true;
-    turn = {id: 1, name: `Student One`};
-  } else {
-    againstPlayer = false;
-    turn = {id: 1, name: `Loser`};
-  };
-  render();
 };
 
 function render() {
@@ -67,13 +67,15 @@ function updateBoard() {
     });
   };
 };
+
 function updateMessage() {
   if (againstPlayer === true) {
     winner === false && tie === false ? messageEl.innerHTML = `Hurry up, ${turn.name}!` : 
     winner === false && tie === true ? messageEl.innerHTML = `You tied!` :
     messageEl.innerHTML = `${turn.name} wins!`;
   } else {
-    winner === false && tie === false ? messageEl.innerHTML = `Good luck, ${turn.name}!` : 
+    winner === false && tie === false && turn.id === 1? messageEl.innerHTML = `Good luck, ${turn.name}!` : 
+    winner === false && tie === false && turn.id === -1? messageEl.innerHTML = `${turn.name} is deciding...` : 
     winner === false && tie === true ? messageEl.innerHTML = `You'll never beat me, ${turn.name}!` :
     messageEl.innerHTML = `${turn.name} wins again!`;
   };
@@ -89,14 +91,18 @@ function handleClick(evt) {
   switchPlayerTurn();
   render();
   if (!againstPlayer) {
-    const compIdx = calcCompIdx(sqrIdx);
-    if (board[compIdx]) return;
-    if (winner) return;
-    placePiece(compIdx);
-    checkForTie();
-    checkForWinner();
-    switchPlayerTurn();
-    render();
+    squareEls.forEach(squareEl => squareEl.removeEventListener(`click`, handleClick));
+    setTimeout(() => {
+      const compIdx = calcCompIdx(sqrIdx);
+      if (board[compIdx]) return;
+      if (winner) return;
+      placePiece(compIdx);
+      checkForTie();
+      checkForWinner();
+      switchPlayerTurn();
+      render();
+      squareEls.forEach(squareEl => squareEl.addEventListener(`click`, handleClick));
+    }, 1500);
   };
 };
 
@@ -247,6 +253,4 @@ function runAnimation(elementRef, animationName) {
 /*---------------------------- Start Function ----------------------------*/
 
 initMenu();
-
-
 

@@ -57,7 +57,7 @@ div {
   background-size: cover;
   border-radius: .25%;
   position: relative;
-  width: 50rem;
+  width: 58rem;
   height: 100%;
   top: 10%;
   filter: blur(.2px);
@@ -73,7 +73,7 @@ div {
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 14.5% 71% 14.5%;
-  grid-template-rows: 18% 18% 46.5% 17.5%;
+  grid-template-rows: 17% 16.5% 50% 16.5%;
   grid-template-areas: 
     "leftMarg header rightMarg"
     "leftMarg message rightMarg"
